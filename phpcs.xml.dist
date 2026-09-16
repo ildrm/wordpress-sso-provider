@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress SSO Provider">
+    <description>Baseline PHP style and compatibility checks.</description>
+    <file>src</file>
+    <file>tests</file>
+    <file>wordpress-sso-provider.php</file>
+    <file>uninstall.php</file>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/>
+    <arg name="warning-severity" value="0"/>
+    <arg value="sp"/>
+    <rule ref="PSR12"/>
+    <rule ref="PSR1.Methods.CamelCapsMethodName">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+</ruleset>

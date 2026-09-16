@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="WordPress SSO Provider WordPress layer">
+    <description>Official WordPress Coding Standards for WordPress-facing adapters.</description>
+    <file>src/Infrastructure/WordPress</file>
+    <file>src/Admin</file>
+    <file>src/Plugin.php</file>
+    <file>wordpress-sso-provider.php</file>
+    <file>uninstall.php</file>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="8"/>
+    <arg name="warning-severity" value="0"/>
+    <arg value="sp"/>
+    <rule ref="WordPress.DB.PreparedSQL"/>
+    <rule ref="WordPress.DB.RestrictedClasses"/>
+    <rule ref="WordPress.PHP.DevelopmentFunctions"/>
+    <rule ref="WordPress.PHP.DiscouragedPHPFunctions"/>
+    <rule ref="WordPress.PHP.RestrictedPHPFunctions"/>
+    <rule ref="WordPress.Security.EscapeOutput"/>
+    <rule ref="WordPress.Security.NonceVerification"/>
+    <rule ref="WordPress.Security.ValidatedSanitizedInput"/>
+    <rule ref="WordPress.WP.I18n"/>
+</ruleset>

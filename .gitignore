@@ -1,0 +1,6 @@
+/vendor/
+/.phpunit.cache/
+/build/*.zip
+/build/*.sha256
+/.DS_Store
+

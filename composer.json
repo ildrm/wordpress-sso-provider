@@ -1,0 +1,51 @@
+{
+  "name": "wordpress-sso-provider/wordpress-sso-provider",
+  "description": "Standards-based IAM and SSO provider for WordPress.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": "^8.2",
+    "ext-json": "*",
+    "ext-openssl": "*",
+    "ext-sodium": "*",
+    "firebase/php-jwt": "^7.1",
+    "onelogin/php-saml": "^4.3.2",
+    "spomky-labs/otphp": "^11.5",
+    "web-auth/webauthn-lib": "^5.3.9"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "phpunit/phpunit": "^10.5",
+    "squizlabs/php_codesniffer": "^3.13",
+    "szepeviktor/phpstan-wordpress": "2.0.4",
+    "wp-coding-standards/wpcs": "3.4.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "WpSsoProvider\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WpSsoProvider\\Tests\\": "tests/"
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "optimize-autoloader": true,
+    "platform": {
+      "php": "8.2.0"
+    },
+    "sort-packages": true
+  },
+  "scripts": {
+    "test": "phpunit",
+    "analyse": "phpstan analyse --memory-limit=1G",
+    "lint": [
+      "phpcs -q --standard=phpcs.xml.dist",
+      "phpcs -q --standard=phpcs-wordpress.xml.dist"
+    ]
+  }
+}

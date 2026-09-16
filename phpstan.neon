@@ -1,0 +1,20 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src/Application
+        - src/Authentication
+        - src/Authorization
+        - src/Domain
+        - src/Identity
+        - src/Protocol
+        - src/Security
+        - src/Infrastructure
+        - src/Admin
+        - src/Plugin.php
+        - wordpress-sso-provider.php
+        - uninstall.php
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: true
