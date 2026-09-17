@@ -2,12 +2,13 @@
 
 /**
  * Plugin Name: WordPress SSO Provider
- * Plugin URI:  https://example.invalid/wordpress-sso-provider
+ * Plugin URI:  https://github.com/ildrm/wp-sso
  * Description: Standards-based identity, SSO, authorization, and provisioning provider for WordPress.
  * Version:     0.1.0
  * Requires at least: 6.6
  * Requires PHP: 8.2
- * Author:      WordPress SSO Provider Contributors
+ * Author:      Shahin Ilderemi
+ * Author URI:  https://ildrm.com
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wordpress-sso-provider
