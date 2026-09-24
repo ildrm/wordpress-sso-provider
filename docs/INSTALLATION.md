@@ -14,7 +14,7 @@
    define('WP_SSO_MASTER_KEY', getenv('WP_SSO_MASTER_KEY'));
    ```
 
-   The environment value must contain at least 32 random bytes and must not reuse
+   The environment value must contain exactly 32 random bytes and must not reuse
    WordPress salts.
 5. Activate “WordPress SSO Provider” and open **SSO Provider → Diagnostics**.
 

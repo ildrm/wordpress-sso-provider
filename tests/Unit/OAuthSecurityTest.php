@@ -7,6 +7,7 @@ namespace WpSsoProvider\Tests\Unit;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use WpSsoProvider\Domain\Application\ApplicationType;
 use WpSsoProvider\Protocol\OAuth\PkceVerifier;
 use WpSsoProvider\Protocol\OAuth\RedirectUriValidator;
 use WpSsoProvider\Protocol\OAuth\ScopeSet;
@@ -26,7 +27,7 @@ final class OAuthSecurityTest extends TestCase
     public function test_unsafe_redirects_are_not_registrable(string $uri): void
     {
         $this->expectException(InvalidArgumentException::class);
-        (new RedirectUriValidator())->assertRegistrable($uri, false);
+        (new RedirectUriValidator())->assertRegistrable($uri, ApplicationType::Web);
     }
 
     /** @return iterable<string, array{string}> */
@@ -37,6 +38,54 @@ final class OAuthSecurityTest extends TestCase
         yield 'wildcard' => ['https://*.example/cb'];
         yield 'http remote' => ['http://client.example/cb'];
         yield 'malformed' => ['not a URI'];
+        yield 'localhost loopback' => ['http://localhost:38111/cb'];
+        yield 'encoded newline' => ['https://client.example/cb%0a'];
+        yield 'bad percent encoding' => ['https://client.example/cb%zz'];
+        yield 'unicode host' => ['https://exämple.com/cb'];
+        yield 'host with trailing dot' => ['https://client.example./cb'];
+    }
+
+    public function test_native_redirect_categories_and_dynamic_loopback_port(): void
+    {
+        $validator = new RedirectUriValidator();
+        $registered = [
+            'https://app.example.com/oauth/callback',
+            'com.example.app:/oauth2redirect/provider',
+            'http://127.0.0.1:10000/oauth/callback?source=app',
+            'http://[::1]:10000/oauth/callback',
+        ];
+
+        foreach ($registered as $uri) {
+            $validator->assertRegistrable($uri, ApplicationType::Native);
+        }
+        self::assertTrue($validator->matches('com.example.app:/oauth2redirect/provider', $registered, ApplicationType::Native));
+        self::assertTrue($validator->matches('http://127.0.0.1:61234/oauth/callback?source=app', $registered, ApplicationType::Native));
+        self::assertTrue($validator->matches('http://[::1]:61234/oauth/callback', $registered, ApplicationType::Native));
+        self::assertFalse($validator->matches('http://127.0.0.1:61234/oauth/other?source=app', $registered, ApplicationType::Native));
+        self::assertFalse($validator->matches('http://127.0.0.1:61234/oauth/callback?source=other', $registered, ApplicationType::Native));
+        self::assertFalse($validator->matches('http://localhost:61234/oauth/callback?source=app', $registered, ApplicationType::Native));
+        self::assertFalse($validator->matches('http://[::1]:61234/oauth/callback?source=app', $registered, ApplicationType::Native));
+    }
+
+    #[DataProvider('invalidNativeRedirects')]
+    public function test_unsafe_native_redirects_are_rejected(string $uri): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new RedirectUriValidator())->assertRegistrable($uri, ApplicationType::Native);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function invalidNativeRedirects(): iterable
+    {
+        yield 'generic scheme' => ['myapp:/callback'];
+        yield 'single-dot scheme' => ['example.app:/callback'];
+        yield 'invalid reverse-domain label' => ['com.example-.app:/callback'];
+        yield 'private scheme authority' => ['com.example.app://attacker/callback'];
+        yield 'remote HTTP' => ['http://app.example.com/callback'];
+        yield 'localhost' => ['http://localhost:8888/callback'];
+        yield 'wrong loopback address' => ['http://127.1:8888/callback'];
+        yield 'zero port' => ['http://127.0.0.1:0/callback'];
+        yield 'fragment' => ['com.example.app:/callback#fragment'];
     }
 
     public function test_s256_pkce_vector_from_rfc_7636(): void

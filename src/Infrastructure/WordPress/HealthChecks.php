@@ -27,7 +27,8 @@ final class HealthChecks
     public static function crypto(): array
     {
         $extensionsReady = extension_loaded('sodium') && extension_loaded('openssl');
-        $masterKeyReady = defined('WP_SSO_MASTER_KEY') && is_string(WP_SSO_MASTER_KEY) && strlen(WP_SSO_MASTER_KEY) >= 32;
+        $masterKeyReady = defined('WP_SSO_MASTER_KEY') && is_string(WP_SSO_MASTER_KEY)
+            && strlen(WP_SSO_MASTER_KEY) === 32;
         $ready = $extensionsReady && $masterKeyReady;
 
         return [
@@ -40,7 +41,7 @@ final class HealthChecks
                 '<p>%s</p>',
                 esc_html($ready
                     ? __('The required cryptographic extensions and dedicated master key are configured.', 'wordpress-sso-provider')
-                    : __('Enable sodium and OpenSSL, then define WP_SSO_MASTER_KEY as a dedicated secret of at least 32 random bytes outside the database.', 'wordpress-sso-provider'))
+                    : __('Enable sodium and OpenSSL, then define WP_SSO_MASTER_KEY as a dedicated secret of exactly 32 random bytes outside the database.', 'wordpress-sso-provider'))
             ),
             'test' => 'wp_sso_provider_crypto',
         ];

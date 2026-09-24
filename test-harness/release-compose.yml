@@ -28,7 +28,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
       WORDPRESS_DEBUG: "1"
       WORDPRESS_CONFIG_EXTRA: |
-        define('WP_SSO_MASTER_KEY', 'release-test-32-byte-master-key');
+        define('WP_SSO_MASTER_KEY', 'fedcba9876543210fedcba9876543210');
         define('WP_ENVIRONMENT_TYPE', 'local');
     ports:
       - "8889:80"
@@ -48,6 +48,9 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress-release-test
       WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_SSO_MASTER_KEY', 'fedcba9876543210fedcba9876543210');
+        define('WP_ENVIRONMENT_TYPE', 'local');
     volumes:
       - release_wp_data:/var/www/html
       - ../build:/artifacts:ro

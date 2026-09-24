@@ -38,7 +38,7 @@ final class DatabaseOneTimeCredentialStore
         $query = $wpdb->prepare(
             'UPDATE %i SET consumed_at = %s
                 WHERE code_hash = %s AND site_id = %d AND application_id = %s
-                AND redirect_uri = %s AND consumed_at IS NULL AND expires_at > %s',
+                AND BINARY redirect_uri = BINARY %s AND consumed_at IS NULL AND expires_at > %s',
             $table,
             $now,
             $codeHash,
@@ -88,7 +88,7 @@ final class DatabaseOneTimeCredentialStore
         $table = $wpdb->prefix . 'sso_cas_tickets';
         $query = $wpdb->prepare(
             'UPDATE %i SET consumed_at = %s
-                WHERE ticket_hash = %s AND site_id = %d AND service_uri = %s
+                WHERE ticket_hash = %s AND site_id = %d AND BINARY service_uri = BINARY %s
                 AND consumed_at IS NULL AND expires_at > %s',
             $table,
             $now,

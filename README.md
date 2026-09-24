@@ -15,7 +15,7 @@ protocol adapters.
 - WordPress activation/deactivation and idempotent versioned migration.
 - Twelve site-scoped IAM tables with indexes for transactional credentials.
 - Custom administrative capabilities and capability-protected REST management.
-- Application creation with safe type presets, exact HTTPS redirect validation,
+- Application creation with type-aware HTTPS and native redirect validation,
   allowlisted scopes, draft lifecycle, and one-time client-secret display.
 - One-way secret storage and atomic authorization-code/CAS-ticket consumption.
 - Shared domain services for application lifecycle, policy decisions, claims
@@ -34,7 +34,7 @@ See [Protocol support](docs/PROTOCOL_SUPPORT.md) for exact status and evidence.
 - PHP 8.2 or newer (verified on 8.3 and 8.5)
 - MySQL 8 or MariaDB 10.6 or newer (verified on MariaDB 11.4)
 - `ext-json`, `ext-openssl`, and `ext-sodium`
-- A dedicated `WP_SSO_MASTER_KEY` environment/config secret of at least 32
+- A dedicated `WP_SSO_MASTER_KEY` environment/config secret of exactly 32
   random bytes before any key-bearing protocol can be enabled
 
 ## Development verification

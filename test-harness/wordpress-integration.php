@@ -11,6 +11,9 @@ $status = $statusResponse->get_data();
 if (($status['protocols']['oidc'] ?? null) !== 'experimental_not_exposed') {
     throw new RuntimeException('Protocol status must not overstate OIDC support.');
 }
+if (($status['crypto']['master_key_configured'] ?? false) !== true) {
+    throw new RuntimeException('Valid 32-byte master key was not recognized.');
+}
 
 $createRequest = new WP_REST_Request('POST', '/wp-sso-provider/v1/applications');
 $createRequest->set_header('Content-Type', 'application/json');
@@ -41,6 +44,42 @@ if (! is_array($stored) || $stored['status'] !== 'draft') {
 }
 if (! password_verify($secret, $stored['client_secret_hash']) || str_contains($stored['client_secret_hash'], $secret)) {
     throw new RuntimeException('Client secret was not irreversibly stored.');
+}
+
+$nativeRequest = new WP_REST_Request('POST', '/wp-sso-provider/v1/applications');
+$nativeRequest->set_header('Content-Type', 'application/json');
+$nativeRequest->set_body(wp_json_encode([
+    'name' => 'Native Integration Client',
+    'type' => 'native',
+    'redirect_uris' => [
+        'https://app.example.test/oauth/callback',
+        'com.example.app:/oauth2redirect/provider',
+        'http://127.0.0.1:10000/oauth/callback',
+    ],
+]));
+$nativeResponse = rest_do_request($nativeRequest);
+$nativeData = $nativeResponse->get_data();
+if ($nativeResponse->get_status() !== 201 || ! is_array($nativeData)
+    || ! array_key_exists('client_secret', $nativeData) || $nativeData['client_secret'] !== null
+) {
+    throw new RuntimeException('Native client registration did not create a public client.');
+}
+$nativeId = $nativeData['application']['id'] ?? null;
+if (! is_string($nativeId) || $wpdb->get_var(
+    $wpdb->prepare("SELECT client_secret_hash FROM {$table} WHERE id = %s", $nativeId)
+) !== null) {
+    throw new RuntimeException('Native client persisted a client secret.');
+}
+
+$webLoopbackRequest = new WP_REST_Request('POST', '/wp-sso-provider/v1/applications');
+$webLoopbackRequest->set_header('Content-Type', 'application/json');
+$webLoopbackRequest->set_body(wp_json_encode([
+    'name' => 'Web Loopback Client',
+    'type' => 'web',
+    'redirect_uris' => ['http://127.0.0.1:10000/oauth/callback'],
+]));
+if (rest_do_request($webLoopbackRequest)->get_status() !== 400) {
+    throw new RuntimeException('Web client was allowed to register an HTTP loopback redirect.');
 }
 
 $invalidRequest = new WP_REST_Request('POST', '/wp-sso-provider/v1/applications');
@@ -83,6 +122,16 @@ $firstCode = $oneTimeStore->consumeAuthorizationCode(
     get_current_blog_id(),
     $codeHash,
     $created['application']['id'],
+    'https://CLIENT.example.test/callback',
+    $now
+);
+if ($firstCode !== null) {
+    throw new RuntimeException('Authorization code accepted a case-changed redirect URI.');
+}
+$firstCode = $oneTimeStore->consumeAuthorizationCode(
+    get_current_blog_id(),
+    $codeHash,
+    $created['application']['id'],
     'https://client.example.test/callback',
     $now
 );
@@ -110,6 +159,9 @@ $wpdb->insert($wpdb->prefix . 'sso_cas_tickets', [
 ]);
 if ($oneTimeStore->consumeCasTicket(get_current_blog_id(), $ticketHash, 'https://wrong.example.test', $now)) {
     throw new RuntimeException('CAS ticket was accepted for the wrong service.');
+}
+if ($oneTimeStore->consumeCasTicket(get_current_blog_id(), $ticketHash, 'https://SERVICE.example.test/login', $now)) {
+    throw new RuntimeException('CAS ticket was accepted for a case-changed service.');
 }
 if (! $oneTimeStore->consumeCasTicket(get_current_blog_id(), $ticketHash, 'https://service.example.test/login', $now)) {
     throw new RuntimeException('CAS ticket was not accepted for its registered service.');

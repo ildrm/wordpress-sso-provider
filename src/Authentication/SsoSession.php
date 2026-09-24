@@ -46,12 +46,16 @@ final class SsoSession
 
     public function isValidAt(DateTimeImmutable $at): bool
     {
+        if ($at < $this->createdAt) {
+            return false;
+        }
+
         if ($this->revokedAt !== null && $at >= $this->revokedAt) {
             return false;
         }
 
-        return $at->getTimestamp() <= $this->lastActivityAt->getTimestamp() + $this->idleTimeout
-            && $at->getTimestamp() <= $this->createdAt->getTimestamp() + $this->absoluteTimeout;
+        return $at->getTimestamp() < $this->lastActivityAt->getTimestamp() + $this->idleTimeout
+            && $at->getTimestamp() < $this->createdAt->getTimestamp() + $this->absoluteTimeout;
     }
 
     public function touch(DateTimeImmutable $at): void

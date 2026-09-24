@@ -35,9 +35,34 @@ Status values: `PLANNED`, `PARTIAL`, `IMPLEMENTED`, `PASS`, `FAIL`, `BLOCKED`, `
 | RQ-028 | Static/dependency/license quality | P0 | Build | WPCS/PHPStan/npm | CI config | lint/audit/license | vulnerable dependency | PARTIAL |
 | RQ-029 | Unit/integration/protocol/security/E2E | P0 | QA | test plan | test suites/harness | recorded reports | hostile input/races | PARTIAL |
 | RQ-030 | Deterministic release/install | P0 | Release | product spec FR-23 | build script | clean ZIP smoke | test secrets/artifacts | PASS |
-| RQ-031 | Documentation/support matrix | P1 | Documentation | product spec | docs set | doc review | false claims | PASS |
+| RQ-031 | Documentation/support matrix | P1 | Documentation | product spec | docs set | doc review | false claims | PARTIAL |
 | RQ-032 | Three clean independent reviews | P0 | Release | master requirement 102 | review records | 3 consecutive passes | Critical/High reset | NOT RUN |
 
 The detailed acceptance criteria and edge cases in `specs/iam-platform.md` are the
-test contract. The master prompt sections 1–109 are covered by RQ-001–RQ-032; the
+test contract. The master prompt sections 1–109 are tracked by RQ-001–RQ-049; the
 mapping is thematic rather than duplicating every prose section as a fake feature.
+
+## Additional mobile and protocol requirements
+
+The rows below use the direct `requirement → code → test → evidence` mapping.
+`None` means no implementation or verification exists; it is not a passing gate.
+
+| ID | Requirement | Priority | Code | Test | Evidence/status |
+|---|---|---|---|---|---|
+| RQ-033 | Native redirect categories and exact loopback-port exception | P0 | `RedirectUriValidator`, `ApplicationService` | `OAuthSecurityTest`, `wordpress-integration.php` | Unit and Docker WordPress PASS; no mobile E2E |
+| RQ-034 | Bearer WordPress REST authentication | P0 | None | None | Unsupported |
+| RQ-035 | Refresh rotation and family reuse revocation | P0 | Schema only | None | Unsupported |
+| RQ-036 | DPoP sender constraint | P1 | None | None | Unsupported |
+| RQ-037 | Device authorization grant | P1 | None | None | Unsupported |
+| RQ-038 | PAR | P1 | None | None | Unsupported |
+| RQ-039 | JAR | P1 | None | None | Unsupported |
+| RQ-040 | JARM | P1 | None | None | Unsupported |
+| RQ-041 | CIBA | P1 | None | None | Unsupported |
+| RQ-042 | Native SSO mobile profile | P2 | None | None | Unsupported; ID2 is not Final |
+| RQ-043 | Protected resource metadata | P1 | None | None | Unsupported |
+| RQ-044 | Token exchange | P1 | None | None | Unsupported |
+| RQ-045 | Passkey registration and authentication | P0 | Dependency only | None | Unsupported |
+| RQ-046 | Upstream OIDC/SAML federation | P1 | None | None | Unsupported |
+| RQ-047 | iOS/Android mobile interoperability | P0 | None | None | NOT RUN; no public flow |
+| RQ-048 | OAuth authorization-code PKCE end to end | P0 | Primitives only | Unit only | Unsupported as a public flow |
+| RQ-049 | OIDC provider end to end | P0 | Metadata model only | Unit only | Unsupported as a public flow |

@@ -15,10 +15,14 @@ final class SessionTest extends TestCase
         $created = new DateTimeImmutable('2026-09-16T10:00:00Z');
         $session = SsoSession::start('ses_01', 42, $created, ['pwd'], 1, 900, 3600);
 
+        self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T09:59:59Z')));
         self::assertTrue($session->isValidAt(new DateTimeImmutable('2026-09-16T10:14:59Z')));
+        self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T10:15:00Z')));
         self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T10:15:01Z')));
         $session->touch(new DateTimeImmutable('2026-09-16T10:10:00Z'));
         self::assertTrue($session->isValidAt(new DateTimeImmutable('2026-09-16T10:24:59Z')));
+        self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T10:25:00Z')));
+        self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T11:00:00Z')));
         self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T11:00:01Z')));
         $session->revoke(new DateTimeImmutable('2026-09-16T10:20:00Z'));
         self::assertFalse($session->isValidAt(new DateTimeImmutable('2026-09-16T10:20:01Z')));

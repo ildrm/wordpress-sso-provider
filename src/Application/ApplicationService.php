@@ -54,7 +54,7 @@ final class ApplicationService
             if (! is_string($uri)) {
                 throw new InvalidArgumentException('Every redirect URI must be a string.');
             }
-            $this->redirects->assertRegistrable($uri);
+            $this->redirects->assertRegistrable($uri, $type);
             if (! in_array($uri, $normalizedUris, true)) {
                 $normalizedUris[] = $uri;
             }

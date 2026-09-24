@@ -36,7 +36,8 @@ final class StatusController
                 'crypto' => [
                     'sodium' => extension_loaded('sodium'),
                     'openssl' => extension_loaded('openssl'),
-                    'master_key_configured' => defined('WP_SSO_MASTER_KEY') && is_string(WP_SSO_MASTER_KEY) && strlen(WP_SSO_MASTER_KEY) >= 32,
+                    'master_key_configured' => defined('WP_SSO_MASTER_KEY') && is_string(WP_SSO_MASTER_KEY)
+                        && strlen(WP_SSO_MASTER_KEY) === 32,
                 ],
                 'protocols' => [
                     'oauth' => 'experimental_not_exposed',
